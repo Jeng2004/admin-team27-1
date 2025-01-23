@@ -4,14 +4,14 @@ pipeline {
         stage('Copy file to Docker server') {
             steps {
                 sh '''
-                scp -i ~/.ssh/id_rsa -r /var/lib/jenkins/workspace/team12_spering/* root@13.60.79.17:~/team12_spering
+                scp -i ~/.ssh/id_rsa -r /var/lib/jenkins/workspace/admin/* root@13.60.79.17:~/admin
                 '''
             }
         }
         stage('Build Docker Image') {
             steps {
                 sh '''
-                ssh -i ~/.ssh/id_rsa root@13.60.79.17 "cd ~/team12_spering && docker build -t team12_image ."
+                ssh -i ~/.ssh/id_rsa root@13.60.79.17 "cd ~/admin && docker build -t admin_image ."
                 '''
             }
         }
@@ -19,10 +19,10 @@ pipeline {
             steps {
                 sh '''
                 ssh -i ~/.ssh/id_rsa root@13.60.79.17 "
-                if docker ps -a --filter 'name=team12_container' --format '{{.ID}}' | grep .; then
-                    docker rm -f team12_container
+                if docker ps -a --filter 'name=admin_container' --format '{{.ID}}' | grep .; then
+                    docker rm -f admin_container
                 fi
-                docker run -d --name team12_container -p 80:80 team12_image
+                docker run -d --name admin_container -p 80:80 admin_image
                 "
                 '''
             }
