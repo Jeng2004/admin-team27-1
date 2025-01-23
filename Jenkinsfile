@@ -19,10 +19,10 @@ pipeline {
             steps {
                 sh '''
                 ssh -i ~/.ssh/id_rsa root@13.60.79.17 "
-                if docker ps -a --filter 'name=admin_container' --format '{{.ID}}' | grep .; then
-                    docker rm -f admin_container
+                if docker ps -a --filter 'name=admin-container' --format '{{.ID}}' | grep .; then
+                    docker rm -f admin-container
                 fi
-                docker run -d --name admin_container -p 80:80 admin_image
+                docker run -d --name admin-container -p 80:80 admin_image
                 "
                 '''
             }
