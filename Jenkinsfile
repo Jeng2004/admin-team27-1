@@ -19,7 +19,7 @@ pipeline {
                 script {
                     try {
                         sh '''
-                        ssh -i ~/.ssh/id_rsa jenkins@51.20.138.54 "cd ~/admin && docker build -t admin_image ."
+                        ssh -i ~/.ssh/id_rsa jenkins@51.20.138.54 "cd ~/admin && docker build -t admin-image ."
                         '''
                     } catch (Exception e) {
                         error("Failed to build Docker image: ${e.message}")
@@ -36,7 +36,7 @@ pipeline {
                         if docker ps -a --filter 'name=admin-container' --format '{{.ID}}' | grep .; then
                             docker rm -f admin-container
                         fi
-                        docker run -d --name admin-container -p 80:80 admin_image
+                        docker run -d --name admin-container -p 80:80 admin-image
                         "
                         '''
                     } catch (Exception e) {
