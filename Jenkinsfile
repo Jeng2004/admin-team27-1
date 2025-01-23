@@ -1,25 +1,31 @@
 pipeline {
     agent any
-    stages {      
-        stage("Copy file to Docker server"){
+    stages {
+        stage('Copy file to Docker server') {
             steps {
-				//แก้ตรง team33-neogym ให้เป็นชื่อเดียวกับ pipeline job/item ที่สร้างใน jenkins
-                sh "scp -r /var/lib/jenkins/workspace/admin/* root@51.20.138.54:~/admin"
+                sh '''
+                scp -i ~/.ssh/id_rsa -r /var/lib/jenkins/workspace/team12_spering/* root@51.20.138.54:~/team12_spering
+                '''
             }
         }
-        
-        stage("Build Docker Image") {
+        stage('Build Docker Image') {
             steps {
-                //path yaml files
-				ansiblePlaybook playbook: '/var/lib/jenkins/workspace/admin/playbooks/build.yaml'
-            }    
-        } 
-        
-        stage("Create Docker Container") {
+                sh '''
+                ssh -i ~/.ssh/id_rsa root@51.20.138.54 "cd ~/team12_spering && docker build -t team12_image ."
+                '''
+            }
+        }
+        stage('Create Docker Container') {
             steps {
-                //path yaml files
-				ansiblePlaybook playbook: '/var/lib/jenkins/workspace/admin/playbooks/deploy.yaml'
-            }    
-        } 
+                sh '''
+                ssh -i ~/.ssh/id_rsa root@51.20.138.54 "
+                if docker ps -a --filter 'name=team12_container' --format '{{.ID}}' | grep .; then
+                    docker rm -f team12_container
+                fi
+                docker run -d --name team12_container -p 80:80 team12_image
+                "
+                '''
+            }
+        }
     }
 }
