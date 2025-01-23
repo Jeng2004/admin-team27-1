@@ -22,7 +22,7 @@ pipeline {
                 if docker ps -a --filter 'name=admin-container' --format '{{.ID}}' | grep .; then
                     docker rm -f admin-container
                 fi
-                docker run -d --name admin-container -p 80:80 admin_image
+                docker run -d --name admin-container -p 80:80 admin-image
                 "
                 '''
             }
